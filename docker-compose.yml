@@ -1,0 +1,13 @@
+services:
+  localstack:
+    image: localstack/localstack:latest
+    container_name: pool-command-localstack
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=dynamodb,s3,cognito-idp,lambda,events,sqs,sns
+      - DEBUG=1
+      - AWS_DEFAULT_REGION=us-east-1
+    volumes:
+      - "./.localstack:/var/lib/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
