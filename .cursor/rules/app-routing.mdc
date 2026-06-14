@@ -1,0 +1,45 @@
+---
+description: Next.js App Router conventions for routes and layouts
+globs: src/app/**
+alwaysApply: false
+---
+
+# App Router
+
+## Route groups
+
+- `(dashboard)` — authenticated shell (`RequireAuth` → `SetupGuard` → `DashboardLayout`)
+- `(setup)` — onboarding wizard (auth required, minimal chrome)
+- Public auth: `/login`, `/signup`, `/forgot-password` (no route group)
+
+## Thin page pattern
+
+`page.tsx` should be a server wrapper that delegates to a feature component:
+
+```tsx
+import { Suspense } from "react";
+import { LoadingState } from "@/components/shared/loading-state";
+import { FeaturePage } from "@/components/<feature>/<feature>-page";
+
+export default function Page() {
+  return (
+    <Suspense fallback={<LoadingState />}>
+      <FeaturePage />
+    </Suspense>
+  );
+}
+```
+
+Use `Suspense` when children call `useSearchParams()`.
+
+## Conventions
+
+- Client logic lives in `src/components/`, not in `page.tsx`
+- Dynamic detail routes: `[id]/page.tsx`
+- New sidebar route: add `mainNavItems` entry **and** matching `(dashboard)/<slug>/page.tsx`
+- API routes: `src/app/api/<name>/route.ts` with named exports (`GET`, `POST`, …)
+- Global styles only in `src/app/globals.css`
+
+## Next.js version
+
+This project uses Next.js 16 with breaking changes. Read `node_modules/next/dist/docs/` before changing routing APIs.

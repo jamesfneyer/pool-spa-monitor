@@ -133,6 +133,8 @@ pnpm sandbox
 
 This deploys Auth + Data (DynamoDB/AppSync) and overwrites `amplify_outputs.json` with real Cognito/AppSync endpoints. Until sandbox runs, a placeholder `amplify_outputs.json` is committed so the app builds without AWS credentials.
 
+Auth emails (signup verification, password reset) use branded HTML templates via a Cognito custom message trigger. By default Cognito’s built-in sender is used for dev/testing; when you have a verified SES domain, set `AUTH_EMAIL_FROM` and redeploy. See [docs/email-setup.md](docs/email-setup.md).
+
 ## Project structure
 
 ```

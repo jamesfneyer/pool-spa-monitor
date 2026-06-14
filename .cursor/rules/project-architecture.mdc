@@ -1,0 +1,55 @@
+---
+description: Master map of where code belongs and how to add features
+alwaysApply: true
+---
+
+# Pool & Spa Command Center — Architecture
+
+## Where things go
+
+| Concern | Location |
+|---------|----------|
+| Dashboard route | `src/app/(dashboard)/<feature>/page.tsx` |
+| Sidebar nav entry | `src/lib/navigation.ts` (`mainNavItems`) |
+| Feature screen / forms | `src/components/<feature>/` (`*-page.tsx`, `*-form-dialog.tsx`) |
+| Cross-feature UI | `src/components/shared/` |
+| shadcn primitives | `src/components/ui/` (add via CLI, do not hand-roll) |
+| Layout / auth chrome | `src/components/layout/`, `src/components/auth/` |
+| Data access | `src/lib/data/` via `getDataProvider()` / `useAsyncData()` |
+| Amplify schema | `amplify/data/resource.ts` |
+| Chemistry / dosing logic | `src/lib/chemistry/` |
+| Form validation | `src/lib/validations/<entity>.ts` |
+| Onboarding | `src/app/(setup)/` + `src/components/setup/` + `src/lib/setup/` |
+| Env / data mode | `src/lib/config/` |
+| Amplify client config | `src/lib/amplify/` |
+| API probes | `src/app/api/<name>/route.ts` |
+| Route protection | `src/middleware.ts` |
+
+## Non-negotiable rules
+
+- UI never calls Amplify or mock stores directly — use the DataProvider abstraction.
+- Amplify schema is source of truth for cloud; mock provider mirrors it for local dev.
+- Do not edit `amplify_outputs.json` by hand; run `pnpm sandbox` after schema changes.
+
+## Dev workflow
+
+- UI work: `pnpm dev:local` (or `pnpm dev:local:bypass` to skip auth)
+- Schema / auth integration: `pnpm sandbox` + `pnpm dev:auth`
+
+## Adding a dashboard feature
+
+1. Add route: `src/app/(dashboard)/<slug>/page.tsx` (thin shell → feature `*-page.tsx`)
+2. Add nav item in `src/lib/navigation.ts`
+3. Create `src/components/<feature>/<feature>-page.tsx`
+4. Add forms/dialogs and Zod schema in `src/lib/validations/` if needed
+5. Use `useAsyncData` + DataProvider for data; chemistry logic in `src/lib/chemistry/`
+
+## Adding a new entity (CRUD)
+
+1. Model in `amplify/data/resource.ts` with `allow.owner()`
+2. Types in `src/lib/data/types.ts`
+3. Methods in `src/lib/data/provider.ts`
+4. Amplify CRUD in `src/lib/data/amplify/provider.ts` + mappers
+5. Mock CRUD in `src/lib/data/mock/provider.ts` (+ seed if needed)
+6. Zod schema in `src/lib/validations/` if user-facing forms exist
+7. Deploy: `pnpm sandbox`, then verify with `pnpm dev:auth`

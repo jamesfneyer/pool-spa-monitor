@@ -1,0 +1,51 @@
+---
+description: React component layers, naming, and UI standards
+globs: src/components/**
+alwaysApply: false
+---
+
+# Components
+
+## Layers (bottom → top)
+
+1. `ui/` — shadcn primitives (Button, Dialog, Card, …)
+2. `shared/` — cross-feature pieces (PageHeader, EmptyState, LoadingState, MetricCard)
+3. `<feature>/` — screens, forms, dialogs for one dashboard area
+4. `layout/` / `auth/` — shell and authentication
+
+## Naming
+
+- Files: kebab-case (`water-tests-page.tsx`)
+- Exports: PascalCase (`WaterTestsPage`)
+- Patterns: `*-page.tsx`, `*-form.tsx`, `*-form-dialog.tsx`, `*-guard.tsx`
+
+## Styling
+
+- Tailwind + `cn()` from `@/lib/utils`
+- Lucide icons; shadcn `base-nova` style (see `components.json`)
+- Light/dark via `ThemeProvider` / `next-themes`
+
+## Forms
+
+- React Hook Form + `@hookform/resolvers/zod`
+- Schemas from `src/lib/validations/`; export `*FormValues` via `z.infer`
+
+## Data loading
+
+```tsx
+const { data, loading, error, reload } = useAsyncData(
+  async (provider) => provider.listWaterTests(),
+  [poolProfileId],
+);
+```
+
+Never import `aws-amplify` or mock stores in components.
+
+## Reuse before creating
+
+- Loading: `LoadingState`
+- Empty lists: `EmptyState`
+- Page titles: `PageHeader`
+- Status chips: `StatusBadge`
+
+Hooks used across features go in `src/lib/`, not a new `src/hooks/` folder.

@@ -1,0 +1,39 @@
+---
+description: Amplify Gen 2 backend schema, auth, and deployment conventions
+globs: amplify/**
+alwaysApply: false
+---
+
+# Amplify Backend
+
+## Structure
+
+- Entry: `amplify/backend.ts` — wires `auth` + `data` via `defineBackend()`
+- Schema: `amplify/data/resource.ts` — single source of truth for models
+- Auth: `amplify/auth/` — Cognito config, custom message Lambda, email templates
+
+## Schema conventions
+
+- Every model: `.authorization((allow) => [allow.owner()])`
+- Default auth mode: `userPool` in `defineData()`
+- Child models: `belongsTo("PoolProfile", "poolProfileId")` with required `poolProfileId`
+- PoolProfile: `hasMany` for each child collection
+- Use `a.enum([...])` for fixed value sets; `a.id().required()` for FKs
+
+## Auth
+
+- Email-only login with CODE verification
+- Branded emails via `amplify/auth/custom-message/handler.ts` + `email-templates/`
+- Optional SES: set `AUTH_EMAIL_FROM` at deploy time (see `docs/email-setup.md`)
+
+## After schema changes
+
+1. Run `pnpm sandbox` — updates DynamoDB, AppSync, and `amplify_outputs.json`
+2. Update frontend data layer (types, provider, mock, mappers)
+3. Verify with `pnpm dev:auth`
+
+Never hand-edit `amplify_outputs.json`. Frontend Amplify client setup belongs in `src/lib/amplify/`, not here.
+
+## Adding non-data resources
+
+Create `amplify/<resource>/resource.ts`, import in `backend.ts`, redeploy sandbox.

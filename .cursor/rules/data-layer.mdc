@@ -1,0 +1,46 @@
+---
+description: DataProvider abstraction, mock/amplify implementations, config
+globs: src/lib/data/**,src/lib/config/**
+alwaysApply: false
+---
+
+# Data Layer
+
+## Architecture
+
+`NEXT_PUBLIC_DATA_MODE` → `getDataProvider()` → `MockDataProvider` | `AmplifyDataProvider`
+
+Config: `src/lib/config/env.ts`, `src/lib/config/data-mode.ts`
+Factory: `src/lib/data/factory.ts`
+Hooks: `src/lib/data/hooks.ts` (`useDataProvider`, `useAsyncData`)
+
+## Adding or changing an entity — touch all five
+
+1. `src/lib/data/types.ts` — entity + `Create*` / `Update*` types
+2. `src/lib/data/provider.ts` — interface methods
+3. `src/lib/data/amplify/provider.ts` — `client.models.*` CRUD
+4. `src/lib/data/amplify/mappers.ts` — Amplify record → domain type
+5. `src/lib/data/mock/provider.ts` (+ `seed.ts` / `store.ts` if needed)
+
+## Amplify provider
+
+```ts
+import type { Schema } from "../../../../amplify/data/resource";
+const client = generateClient<Schema>();
+```
+
+Map `createdAt` / `updatedAt` in mappers; handle nullable FKs explicitly.
+
+## Modes
+
+| Mode | Command | Notes |
+|------|---------|-------|
+| mock | `pnpm dev:local` | In-memory; resets on restart |
+| amplify | `pnpm dev:auth` | Requires `pnpm sandbox` first |
+| localstack | — | **Not implemented**; falls back to mock |
+
+Do not build features that require `localstack` without implementing a real provider.
+
+## Existing entities
+
+PoolProfile, WaterTest, ChemicalDose, Equipment, MaintenanceTask, PoolNote — all owner-scoped via `poolProfileId`.

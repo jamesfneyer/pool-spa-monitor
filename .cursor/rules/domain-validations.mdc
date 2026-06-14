@@ -1,0 +1,40 @@
+---
+description: Chemistry domain logic, Zod validations, and setup presets
+globs: src/lib/chemistry/**,src/lib/validations/**,src/lib/setup/**
+alwaysApply: false
+---
+
+# Domain Logic
+
+## Chemistry (`src/lib/chemistry/`)
+
+Pure functions for pool/spa water science — no React imports in core modules.
+
+- `status.ts`, `ranges.ts` — evaluate readings against profile targets
+- `test-recommendations.ts`, `dosing-tips.ts` — actionable advice
+- `tip-to-maintenance.ts` — bridge tips → maintenance task inputs
+- `use-recommendation-maintenance.ts` — hook only when React state is needed
+
+Keep saltwater, CYA, free chlorine, pH, alkalinity logic here, not in components.
+
+## Validations (`src/lib/validations/`)
+
+One Zod schema per form entity:
+
+```ts
+export const waterTestSchema = z.object({ /* fields */ });
+export type WaterTestFormValues = z.infer<typeof waterTestSchema>;
+```
+
+- String fields for numeric inputs that may be empty (parse in submit handler)
+- Import schemas in form components via `@hookform/resolvers/zod`
+
+## Setup (`src/lib/setup/`)
+
+Onboarding data only — defaults, equipment presets, types. UI lives in `src/components/setup/`.
+
+## When adding chemistry features
+
+1. Add pure logic in `src/lib/chemistry/`
+2. Add Zod schema if a new form is involved
+3. Surface results in feature components via imports from `lib/`, not inline calculations
