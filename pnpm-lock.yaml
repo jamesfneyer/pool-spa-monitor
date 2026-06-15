@@ -11,6 +11,12 @@ importers:
       '@aws-amplify/adapter-nextjs':
         specifier: ^1.7.3
         version: 1.7.3(aws-amplify@6.18.0)(next@16.2.9(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))
+      '@aws-amplify/backend':
+        specifier: ^1.23.0
+        version: 1.23.0(@aws-cdk/cli-plugin-contract@2.182.2)(@aws-sdk/client-cloudformation@3.1067.0)(@aws-sdk/client-s3@3.1067.0)(@aws-sdk/types@3.973.12)(aws-cdk-lib@2.258.1(constructs@10.6.0))(constructs@10.6.0)(zod@3.25.17)
+      '@aws-amplify/backend-cli':
+        specifier: ^1.8.3
+        version: 1.8.3(@aws-cdk/cli-plugin-contract@2.182.2)(@aws-sdk/types@3.973.12)(@types/node@20.19.43)(aws-cdk-lib@2.258.1(constructs@10.6.0))(constructs@10.6.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@5.9.3)
       '@aws-amplify/ui-react':
         specifier: ^6.15.4
         version: 6.15.4(@aws-amplify/core@6.16.4)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(aws-amplify@6.18.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(xstate@4.38.3)
@@ -29,15 +35,24 @@ importers:
       aws-amplify:
         specifier: ^6.18.0
         version: 6.18.0
+      aws-cdk-lib:
+        specifier: ^2.258.1
+        version: 2.258.1(constructs@10.6.0)
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
+      constructs:
+        specifier: ^10.6.0
+        version: 10.6.0
       date-fns:
         specifier: ^4.4.0
         version: 4.4.0
+      esbuild:
+        specifier: ^0.28.1
+        version: 0.28.1
       lucide-react:
         specifier: ^1.17.0
         version: 1.17.0(react@19.2.4)
@@ -75,12 +90,6 @@ importers:
         specifier: ^3.25.17
         version: 3.25.17
     devDependencies:
-      '@aws-amplify/backend':
-        specifier: ^1.23.0
-        version: 1.23.0(@aws-cdk/cli-plugin-contract@2.182.2)(@aws-sdk/client-cloudformation@3.1067.0)(@aws-sdk/client-s3@3.1067.0)(@aws-sdk/types@3.973.12)(aws-cdk-lib@2.258.1(constructs@10.6.0))(constructs@10.6.0)(zod@3.25.17)
-      '@aws-amplify/backend-cli':
-        specifier: ^1.8.3
-        version: 1.8.3(@aws-cdk/cli-plugin-contract@2.182.2)(@aws-sdk/types@3.973.12)(@types/node@20.19.43)(aws-cdk-lib@2.258.1(constructs@10.6.0))(constructs@10.6.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@5.9.3)
       '@tailwindcss/postcss':
         specifier: ^4
         version: 4.3.0
@@ -96,15 +105,6 @@ importers:
       '@types/react-dom':
         specifier: ^19
         version: 19.2.3(@types/react@19.2.17)
-      aws-cdk-lib:
-        specifier: ^2.258.1
-        version: 2.258.1(constructs@10.6.0)
-      constructs:
-        specifier: ^10.6.0
-        version: 10.6.0
-      esbuild:
-        specifier: ^0.28.1
-        version: 0.28.1
       eslint:
         specifier: ^9
         version: 9.39.4(jiti@2.7.0)

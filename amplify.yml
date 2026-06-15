@@ -5,7 +5,22 @@ backend:
       commands:
         - export CI=1
         - corepack enable
-        - pnpm install --frozen-lockfile
+        - pnpm install --frozen-lockfile --prod=false
+        - echo "=== Backend build diagnostics ==="
+        - echo "NODE_ENV=${NODE_ENV:-unset}"
+        - echo "AWS_BRANCH=${AWS_BRANCH:-unset}"
+        - echo "AWS_APP_ID=${AWS_APP_ID:-unset}"
+        - node --version
+        - pwd
+        - git rev-parse HEAD
+        - git branch -a
+        - ls -la amplify/
+        - ls -la amplify/auth/
+        - test -f amplify/auth/resource.ts && echo "auth resource OK" || (echo "MISSING amplify/auth/resource.ts" && exit 1)
+        - test -f amplify/backend.ts && echo "backend entry OK" || (echo "MISSING amplify/backend.ts" && exit 1)
+        - pnpm exec ampx --version
+        - test -d node_modules/@aws-amplify/backend && echo "@aws-amplify/backend OK" || (echo "MISSING @aws-amplify/backend" && exit 1)
+        - echo "=== End diagnostics ==="
         - echo "Deploying backend for branch $AWS_BRANCH"
         - |
           case "${AWS_BRANCH}" in
@@ -31,7 +46,7 @@ frontend:
     preBuild:
       commands:
         - corepack enable
-        - pnpm install --frozen-lockfile
+        - pnpm install --frozen-lockfile --prod=false
     build:
       commands:
         - pnpm run build
