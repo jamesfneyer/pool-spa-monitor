@@ -22,6 +22,9 @@
 
 # misc
 .DS_Store
+# macOS Finder duplicate copies
+* 2.*
+* 3.*
 *.pem
 
 # debug

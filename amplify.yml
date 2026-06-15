@@ -65,5 +65,5 @@ frontend:
       - '**/*'
   cache:
     paths:
-      - node_modules/**/*
+      # node_modules omitted — compressing pnpm's store blows past container RAM on Amplify Standard.
       - .next/cache/**/*
