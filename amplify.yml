@@ -1,0 +1,45 @@
+version: 1
+backend:
+  phases:
+    build:
+      commands:
+        - export CI=1
+        - corepack enable
+        - pnpm install --frozen-lockfile
+        - echo "Deploying backend for branch $AWS_BRANCH"
+        - |
+          case "${AWS_BRANCH}" in
+            main)
+              echo "Deploying production backend..."
+              pnpm exec ampx pipeline-deploy --branch $AWS_BRANCH --app-id $AWS_APP_ID
+              ;;
+            staging)
+              echo "Deploying staging backend..."
+              pnpm exec ampx pipeline-deploy --branch $AWS_BRANCH --app-id $AWS_APP_ID
+              ;;
+            pr-*)
+              echo "Deploying ephemeral preview backend..."
+              pnpm exec ampx pipeline-deploy --branch $AWS_BRANCH --app-id $AWS_APP_ID
+              ;;
+            *)
+              echo "Reusing staging backend outputs for feature branch..."
+              pnpm exec ampx generate outputs --branch staging --app-id $AWS_APP_ID
+              ;;
+          esac
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - corepack enable
+        - pnpm install --frozen-lockfile
+    build:
+      commands:
+        - pnpm run build
+  artifacts:
+    baseDirectory: .next
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - node_modules/**/*
+      - .next/cache/**/*

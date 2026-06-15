@@ -135,6 +135,60 @@ This deploys Auth + Data (DynamoDB/AppSync) and overwrites `amplify_outputs.json
 
 Auth emails (signup verification, password reset) use branded HTML templates via a Cognito custom message trigger. By default Cognito’s built-in sender is used for dev/testing; when you have a verified SES domain, set `AUTH_EMAIL_FROM` and redeploy. See [docs/email-setup.md](docs/email-setup.md).
 
+## Deploy to Amplify Hosting
+
+Use Amplify Hosting for persistent, branch-based deployments with real Cognito auth and DynamoDB. Local sandbox (`pnpm sandbox`) remains for personal integration testing; hosted builds use [`amplify.yml`](amplify.yml) to deploy backends per branch.
+
+### Branch strategy
+
+| Git branch | Backend | Purpose |
+|------------|---------|---------|
+| `main` | Production (`pipeline-deploy`) | Live app |
+| `staging` | Staging (`pipeline-deploy`) | Pre-production testing |
+| `pr-*` | Ephemeral preview (`pipeline-deploy`) | Per-PR fullstack preview; torn down when PR closes |
+| Other feature branches | Staging outputs (`generate outputs`) | Reuses staging backend; no new AWS resources |
+
+The app reads `amplify_outputs.json` generated at build time — no Cognito pool IDs, AppSync URLs, or DynamoDB table names are hardcoded in source.
+
+### Console setup (one-time)
+
+1. Open [AWS Amplify Console](https://console.aws.amazon.com/amplify/) → **Host web app** → connect `jamesfneyer/pool-spa-monitor`.
+2. Confirm the app platform is **WEB_COMPUTE** (required for Next.js SSR).
+3. Connect branches: `main` (production), `staging` (staging/test).
+4. Enable **Pull request previews** on `main` (Hosting → Previews) for ephemeral `pr-*` backends.
+5. Set **branch-specific environment variables** (Hosting → Environment variables):
+
+| Variable | `main` | `staging` | Notes |
+|----------|--------|-----------|-------|
+| `NEXT_PUBLIC_DATA_MODE` | `amplify` | `amplify` | **Required** — without this, the hosted app uses in-memory mock data |
+| `NEXT_PUBLIC_DEV_AUTH_BYPASS` | `false` | `false` | |
+| `NEXT_PUBLIC_APP_URL` | prod `*.amplifyapp.com` URL | staging URL | Set per branch after the first deploy |
+
+Optional backend email vars (`AUTH_EMAIL_FROM`, `AUTH_EMAIL_FROM_NAME`, `AUTH_EMAIL_REPLY_TO`) can be added later via Hosting → Secrets. Not required for initial testing — see [docs/email-setup.md](docs/email-setup.md).
+
+### Deploy order
+
+1. Push `amplify.yml` and `.nvmrc` to `main` → first deploy creates the production backend.
+2. Create a `staging` branch in Git → Amplify auto-deploys staging resources.
+3. Open a pull request against `main` to test an ephemeral `pr-*` preview.
+
+### Verify the hosted deployment
+
+- `https://<your-url>/api/health` returns `"dataMode": "amplify"`.
+- `/signup` → email verification → `/login` → `/dashboard`.
+- Create a pool profile or water test — data persists across reloads (DynamoDB, not mock).
+
+### Local vs hosted
+
+| Environment | Backend | Command / trigger |
+|-------------|---------|-------------------|
+| Local dev | Personal sandbox | `pnpm sandbox` + `pnpm dev:auth` |
+| Hosted `main` | Production | Git push to `main` |
+| Hosted `staging` | Staging | Git push to `staging` |
+| PR preview | Ephemeral | Open PR against `main` |
+
+Never hand-edit `amplify_outputs.json` for hosted environments — CI generates it per branch during the backend build phase.
+
 ## Project structure
 
 ```

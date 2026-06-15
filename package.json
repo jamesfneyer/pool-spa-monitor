@@ -2,6 +2,9 @@
   "name": "pool-spa-command-center",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "dev": "next dev",
     "dev:local": "NEXT_PUBLIC_DATA_MODE=mock next dev",
