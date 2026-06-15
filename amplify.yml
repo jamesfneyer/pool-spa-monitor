@@ -4,6 +4,8 @@ backend:
     build:
       commands:
         - export CI=1
+        - nvm install 20
+        - nvm use 20
         - corepack enable
         - pnpm install --frozen-lockfile --prod=false
         - echo "=== Backend build diagnostics ==="
@@ -45,6 +47,8 @@ frontend:
   phases:
     preBuild:
       commands:
+        - nvm install 20
+        - nvm use 20
         - corepack enable
         - pnpm install --frozen-lockfile --prod=false
     build:
