@@ -4,6 +4,7 @@ backend:
     build:
       commands:
         - export CI=1
+        - export NODE_OPTIONS='--max-old-space-size=6144'
         - nvm install 20
         - nvm use 20
         - corepack enable
@@ -49,10 +50,14 @@ frontend:
       commands:
         - nvm install 20
         - nvm use 20
+        - export NODE_OPTIONS='--max-old-space-size=6144'
+        - export GENERATE_SOURCEMAP=false
         - corepack enable
         - pnpm install --frozen-lockfile --prod=false
     build:
       commands:
+        - export NODE_OPTIONS='--max-old-space-size=6144'
+        - export GENERATE_SOURCEMAP=false
         - pnpm run build
   artifacts:
     baseDirectory: .next
