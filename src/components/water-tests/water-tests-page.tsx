@@ -387,10 +387,13 @@ export function WaterTestsPage() {
               {(
                 [
                   ["freeChlorine", "Free chlorine (ppm)"],
+                  ["totalChlorine", "Total chlorine (ppm)"],
                   ["pH", "pH"],
                   ["alkalinity", "Alkalinity (ppm)"],
+                  ["calciumHardness", "Calcium hardness (ppm)"],
                   ["cya", "CYA (ppm)"],
                   ["salt", "Salt (ppm)"],
+                  ["phosphates", "Phosphates (ppb)"],
                   ["waterTemp", "Water temp (°F)"],
                 ] as const
               ).map(([name, label]) => (
